@@ -31,7 +31,12 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   useEffect(() => {
     const fetchMe = async () => {
       try {
-        const response = await api.get("/get/me");
+        // const response = await api.get("/get/me");
+        const response = {
+          data: {
+            accessToken: "fakeToken",
+          },
+        };
         setToken(response.data.accessToken);
       } catch (error) {
         setToken(null);
