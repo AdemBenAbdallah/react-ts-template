@@ -1,13 +1,13 @@
-import { authApi } from "@/api";
-import { useAuthContext } from "@/common/contexts/authProvider/useAuthContext";
-import { useQuery } from "@tanstack/react-query";
-import { useEffect } from "react";
-import { useCookies } from "react-cookie";
-import { Navigate, Outlet, useLocation } from "react-router-dom";
-import FullScreenLoader from "./FullScreenLoader";
+import { authApi } from '@/api';
+import { useAuthContext } from '@/common/contexts/authProvider/useAuthContext';
+import { useQuery } from '@tanstack/react-query';
+import { useEffect } from 'react';
+import { useCookies } from 'react-cookie';
+import { Navigate, Outlet, useLocation } from 'react-router-dom';
+import FullScreenLoader from './FullScreenLoader';
 
 const RequireUser = ({ allowedRoles }: { allowedRoles: string[] }) => {
-  const [cookies] = useCookies(["logged_in"]);
+  const [cookies] = useCookies(['logged_in']);
   const location = useLocation();
   const authContext = useAuthContext();
 
@@ -17,14 +17,14 @@ const RequireUser = ({ allowedRoles }: { allowedRoles: string[] }) => {
     data: user,
   } = useQuery({
     retry: 1,
-    queryKey: ["authUser"],
+    queryKey: ['authUser'],
     queryFn: () => authApi.getMe(),
     select: (data) => data.data.user,
   });
 
   useEffect(() => {
     if (user) {
-      authContext.dispatch({ type: "SET_USER", payload: user });
+      authContext.dispatch({ type: 'SET_USER', payload: user });
     }
   }, [user, authContext]);
 
@@ -34,8 +34,7 @@ const RequireUser = ({ allowedRoles }: { allowedRoles: string[] }) => {
     return <FullScreenLoader />;
   }
 
-  return (cookies.logged_in || user) &&
-    allowedRoles.includes(user?.role as string) ? (
+  return (cookies.logged_in || user) && allowedRoles.includes(user?.role as string) ? (
     <Outlet />
   ) : cookies.logged_in && user ? (
     <Navigate to="/unauthorized" state={{ from: location }} replace />
