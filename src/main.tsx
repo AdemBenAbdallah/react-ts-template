@@ -3,6 +3,7 @@ import React from "react";
 import ReactDOM from "react-dom/client";
 import App from "./App.tsx";
 import { AuthProvider } from "./common/contexts/index.ts";
+import { MantineProvider } from "@mantine/core";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -20,7 +21,9 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
     <AuthProvider>
       <QueryClientProvider client={queryClient}>
-        <App />
+        <MantineProvider>
+          <App />
+        </MantineProvider>
       </QueryClientProvider>
     </AuthProvider>
   </React.StrictMode>
