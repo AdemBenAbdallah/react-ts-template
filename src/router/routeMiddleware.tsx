@@ -51,7 +51,7 @@ const RouteMiddleware = ({ route }: Props) => {
   const escapeRoute = () => {
     return <Navigate to={route.fallback ? route.fallback : PATHS.FALLBACK} />;
   };
-  console.log(passport);
+console.log(passport);
   return (
     <>
       {!route.isPrivate

@@ -1,97 +1,47 @@
-import { InternalAxiosRequestConfig } from "axios";
-import {
-  ReactNode,
-  createContext,
-  useEffect,
-  useLayoutEffect,
-  useState,
-} from "react";
-import { api } from "../../../services/api";
+import React from "react";
+import type { TUser } from "../../../types/state/index";
 
-type CustomAxiosRequestConfig = InternalAxiosRequestConfig & {
-  _retry?: boolean;
+type State = {
+  authUser: TUser | null;
 };
 
-type AuthContextType = {
-  token: string | null | undefined;
-  setToken: (token: string | null | undefined) => void;
+type Action = {
+  type: string;
+  payload: TUser | null;
 };
 
-export const AuthContext = createContext<AuthContextType | undefined>(
-  undefined
-);
+type Dispatch = (action: Action) => void;
 
-type AuthProviderProps = {
-  children: ReactNode;
+const initialState: State = {
+  authUser: null,
 };
 
-export const AuthProvider = ({ children }: AuthProviderProps) => {
-  const [token, setToken] = useState<string | undefined | null>(undefined);
+type AuthProviderProps = { children: React.ReactNode };
 
-  useEffect(() => {
-    const fetchMe = async () => {
-      try {
-        // const response = await api.get("/get/me");
-        const response = {
-          data: {
-            accessToken: "fakeToken",
-          },
-        };
-        setToken(response.data.accessToken);
-      } catch (error) {
-        setToken(null);
-      }
-    };
-    fetchMe();
-  }, []);
+export const StateContext = React.createContext<
+  { state: State; dispatch: Dispatch } | undefined
+>(undefined);
 
-  useLayoutEffect(() => {
-    const authInterceptor = api.interceptors.request.use(
-      (config: CustomAxiosRequestConfig) => {
-        if (token && !config._retry) {
-          config.headers.Authorization = `Bearer ${token}`;
-        }
-        return config;
-      }
-    );
+const stateReducer = (state: State, action: Action) => {
+  switch (action.type) {
+    case "SET_USER": {
+      return {
+        ...state,
+        authUser: action.payload,
+      };
+    }
+    default: {
+      throw new Error(`Unhandled action type`);
+    }
+  }
+};
 
-    return () => {
-      api.interceptors.request.eject(authInterceptor);
-    };
-  }, [token]);
-
-  useLayoutEffect(() => {
-    const refreshInterceptor = api.interceptors.response.use(
-      (response) => response,
-      async (error) => {
-        const originalRequest = error.config;
-        if (
-          error.response?.status === 403 &&
-          error.response?.data?.message === "Unauthorized" &&
-          !originalRequest._retry
-        ) {
-          originalRequest._retry = true;
-          try {
-            const response = await api.get("/refresh");
-            setToken(response.data.accessToken);
-            originalRequest.headers.Authorization = `Bearer ${response.data.accessToken}`;
-            return api(originalRequest);
-          } catch (error) {
-            setToken(null);
-          }
-        }
-        return Promise.reject(error);
-      }
-    );
-
-    return () => {
-      api.interceptors.response.eject(refreshInterceptor);
-    };
-  }, [token]);
-
+const AuthProvider = ({ children }: AuthProviderProps) => {
+  const [state, dispatch] = React.useReducer(stateReducer, initialState);
+  const value = { state, dispatch };
   return (
-    <AuthContext.Provider value={{ token, setToken }}>
-      {children}
-    </AuthContext.Provider>
+    <StateContext.Provider value={value}>{children}</StateContext.Provider>
   );
 };
+
+export { AuthProvider };
