@@ -1,5 +1,5 @@
 import { authApi } from "@/api";
-import { useAuthContext } from "@/common/contexts/authProvider/useStateContext";
+import { useAuthContext } from "@/common/contexts/authProvider/useAuthContext";
 import { Box, Button, Flex, Text } from "@mantine/core";
 import { useMutation } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
