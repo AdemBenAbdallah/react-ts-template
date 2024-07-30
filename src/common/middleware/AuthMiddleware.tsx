@@ -1,7 +1,7 @@
 import { authApi } from '@/api';
 import FullScreenLoader from '@/core/components/FullScreenLoader';
 import { useQuery } from '@tanstack/react-query';
-import React, { useEffect } from 'react';
+import React, { useLayoutEffect } from 'react';
 import { useCookies } from 'react-cookie';
 import { useAuthContext } from '../contexts/authProvider/useAuthContext';
 
@@ -20,7 +20,7 @@ const AuthMiddleware: React.FC<AuthMiddlewareProps> = ({ children }) => {
     select: (data) => data.data.user,
   });
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     if (user) {
       authContext.dispatch({
         type: 'SET_USER',
