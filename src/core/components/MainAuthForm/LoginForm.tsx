@@ -1,3 +1,5 @@
+import { authApi } from '@/api';
+import { InputLoginForm, TLoginInput } from '@/types';
 import {
   Anchor,
   Button,
@@ -11,22 +13,27 @@ import {
   rem,
 } from '@mantine/core';
 import { useForm, zodResolver } from '@mantine/form';
-import { object, string, z } from 'zod';
-
-const InputLogin = object({
-  email: string().min(1, 'Email address is required').email('Email Address is invalid'),
-  password: string()
-    .min(1, 'Password is required')
-    .min(8, 'Password must be more than 8 characters')
-    .max(32, 'Password must be less than 32 characters'),
-});
-
-type LoginFormType = z.infer<typeof InputLogin>;
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useLocation, useNavigate } from 'react-router-dom';
 
 export function LoginForm(props: { toggle: () => void }) {
-  const form = useForm<LoginFormType>({
+  const navigate = useNavigate();
+  const location = useLocation();
+  const from = (location.state?.from.pathname as string) || '/';
+  const queryClient = useQueryClient();
+
+  const { mutate: $loginUser, isPending } = useMutation({
+    mutationKey: ['loginUser'],
+    mutationFn: (data: TLoginInput) => authApi.loginUser(data),
+    onSuccess: () => {
+      queryClient.invalidateQueries();
+      navigate(from, { replace: true });
+    },
+  });
+
+  const form = useForm<TLoginInput>({
     initialValues: { email: '', password: '' },
-    validate: zodResolver(InputLogin),
+    validate: zodResolver(InputLoginForm),
     validateInputOnBlur: true,
     validateInputOnChange: ['email', 'password'],
   });
@@ -42,7 +49,7 @@ export function LoginForm(props: { toggle: () => void }) {
 
         <form
           onSubmit={form.onSubmit(async (values) => {
-            console.log(values);
+            $loginUser(values);
           })}
         >
           <Stack>
@@ -79,7 +86,13 @@ export function LoginForm(props: { toggle: () => void }) {
             >
               Vous n'avez pas de compte ? Inscrivez-vous
             </Anchor>
-            <Button size="sm" disabled={!form.isValid()} type="submit" radius="xl">
+            <Button
+              loading={isPending}
+              size="sm"
+              disabled={!form.isValid()}
+              type="submit"
+              radius="xl"
+            >
               Connexion
             </Button>
           </Flex>

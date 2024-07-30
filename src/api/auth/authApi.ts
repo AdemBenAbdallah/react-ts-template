@@ -1,12 +1,6 @@
-import axios, { AxiosInstance } from "axios";
-import Config from "../../common/config/Config";
-import {
-  GenericResponse,
-  LoginInput,
-  RegisterInput,
-  TLoginResponse,
-  TUserResponse,
-} from "../../types";
+import axios, { AxiosInstance } from 'axios';
+import Config from '../../common/config/Config';
+import { GenericResponse, RegisterInput, TLoginInput, TLoginResponse } from '../../types';
 
 class AuthApi {
   private instance: AxiosInstance;
@@ -17,14 +11,14 @@ class AuthApi {
       withCredentials: true,
     });
 
-    this.instance.defaults.headers.common["Content-Type"] = "application/json";
+    this.instance.defaults.headers.common['Content-Type'] = 'application/json';
 
     this.instance.interceptors.response.use(
       (response) => response,
       async (error) => {
         const originalRequest = error.config;
         const errMessage = error.response.data.message as string;
-        if (errMessage.includes("not logged in") && !originalRequest._retry) {
+        if (errMessage.includes('not logged in') && !originalRequest._retry) {
           originalRequest._retry = true;
           await this.refreshAccessToken();
           return this.instance(originalRequest);
@@ -35,37 +29,27 @@ class AuthApi {
   }
 
   private async refreshAccessToken() {
-    const response = await this.instance.get<TLoginResponse>("/refresh");
+    const response = await this.instance.get<TLoginResponse>('/refresh');
     return response.data;
   }
 
   async signUpUser(user: RegisterInput) {
-    const response = await this.instance.post<GenericResponse>(
-      "/register",
-      user
-    );
+    const response = await this.instance.post<GenericResponse>('/register', user);
     return response.data;
   }
 
-  async loginUser(user: LoginInput) {
-    const response = await this.instance.post<TLoginResponse>("/login", user);
+  async loginUser(user: TLoginInput) {
+    const response = await this.instance.post<TLoginResponse>('/login', user);
     return response.data;
   }
 
   async verifyEmail(verificationCode: string) {
-    const response = await this.instance.get<GenericResponse>(
-      `/verifyemail/${verificationCode}`
-    );
+    const response = await this.instance.get<GenericResponse>(`/verifyemail/${verificationCode}`);
     return response.data;
   }
 
   async logoutUser() {
-    const response = await this.instance.get<GenericResponse>("/logout");
-    return response.data;
-  }
-
-  async getMe() {
-    const response = await this.instance.get<TUserResponse>("/users/me");
+    const response = await this.instance.get<GenericResponse>('/logout');
     return response.data;
   }
 }

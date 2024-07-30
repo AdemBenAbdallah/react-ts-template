@@ -1,4 +1,4 @@
-import { authApi } from '@/api';
+import { userApi } from '@/api/auth/userApi';
 import FullScreenLoader from '@/core/components/FullScreenLoader';
 import { useQuery } from '@tanstack/react-query';
 import React, { useLayoutEffect } from 'react';
@@ -13,21 +13,26 @@ const AuthMiddleware: React.FC<AuthMiddlewareProps> = ({ children }) => {
   const [cookies] = useCookies(['logged_in']);
   const authContext = useAuthContext();
 
-  const { isLoading, data: user } = useQuery({
+  const {
+    isLoading,
+    data: user,
+    isSuccess,
+  } = useQuery({
     retry: 1,
     queryKey: ['authUser'],
-    queryFn: () => authApi.getMe(),
+    queryFn: () => userApi.getMe(),
     select: (data) => data.data.user,
   });
 
   useLayoutEffect(() => {
-    if (user) {
+    if (user && isSuccess) {
       authContext.dispatch({
         type: 'SET_USER',
         payload: user,
       });
     }
-  }, [user, authContext]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [user]);
 
   if (isLoading && cookies.logged_in) {
     return <FullScreenLoader />;

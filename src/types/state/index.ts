@@ -1,3 +1,5 @@
+import { z } from 'zod';
+
 type TUser = {
   id: string;
   name: string;
@@ -17,7 +19,16 @@ type RegisterInput = {
   role: string;
 };
 
-type LoginInput = Omit<RegisterInput, "role" | "confirmPassword">;
+const InputLoginForm = z.object({
+  email: z.string().min(1, 'Email address is required').email('Email Address is invalid'),
+  password: z
+    .string()
+    .min(1, 'Password is required')
+    .min(8, 'Password must be more than 8 characters')
+    .max(32, 'Password must be less than 32 characters'),
+});
+
+type TLoginInput = z.infer<typeof InputLoginForm>;
 
 type GenericResponse = {
   status: string;
@@ -36,11 +47,5 @@ type TUserResponse = {
   };
 };
 
-export type {
-  GenericResponse,
-  LoginInput,
-  RegisterInput,
-  TLoginResponse,
-  TUser,
-  TUserResponse,
-};
+export { InputLoginForm };
+export type { GenericResponse, RegisterInput, TLoginInput, TLoginResponse, TUser, TUserResponse };

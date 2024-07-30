@@ -1,7 +1,7 @@
-import { authApi } from '@/api';
+import { userApi } from '@/api/auth/userApi';
 import { useAuthContext } from '@/common/contexts/authProvider/useAuthContext';
 import { useQuery } from '@tanstack/react-query';
-import { useEffect } from 'react';
+import { useLayoutEffect } from 'react';
 import { useCookies } from 'react-cookie';
 import { Navigate, Outlet, useLocation } from 'react-router-dom';
 import FullScreenLoader from './FullScreenLoader';
@@ -15,18 +15,20 @@ const RequireUser = ({ allowedRoles }: { allowedRoles: string[] }) => {
     isLoading,
     isFetching,
     data: user,
+    isSuccess,
   } = useQuery({
     retry: 1,
     queryKey: ['authUser'],
-    queryFn: () => authApi.getMe(),
+    queryFn: () => userApi.getMe(),
     select: (data) => data.data.user,
   });
 
-  useEffect(() => {
-    if (user) {
+  useLayoutEffect(() => {
+    if (user && isSuccess) {
       authContext.dispatch({ type: 'SET_USER', payload: user });
     }
-  }, [user, authContext]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [user]);
 
   const loading = isLoading || isFetching;
 

@@ -1,5 +1,5 @@
 class Config {
-  API_URL = "http://localhost:8000";
+  API_URL = 'http://localhost:8000/api';
 
   private static instance: Config;
   public static getInstance(): Config {
