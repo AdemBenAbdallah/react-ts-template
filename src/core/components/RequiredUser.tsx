@@ -1,10 +1,10 @@
-import { userApi } from '@/api/auth/userApi';
 import { useAuthContext } from '@/common/contexts/authProvider/useAuthContext';
 import { useQuery } from '@tanstack/react-query';
 import { useLayoutEffect } from 'react';
 import { useCookies } from 'react-cookie';
 import { Navigate, Outlet, useLocation } from 'react-router-dom';
 import FullScreenLoader from './FullScreenLoader';
+import { userApi } from '@/api';
 
 const RequireUser = ({ allowedRoles }: { allowedRoles: string[] }) => {
   const [cookies] = useCookies(['logged_in']);
