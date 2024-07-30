@@ -1,70 +1,48 @@
-import { authApi } from "@/api";
-import { useAuthContext } from "@/common/contexts/authProvider/useAuthContext";
-import { Box, Button, Flex, Text } from "@mantine/core";
-import { useMutation } from "@tanstack/react-query";
-import { useNavigate } from "react-router-dom";
+import { authApi } from '@/api';
+import { useAuthContext } from '@/common/contexts/authProvider/useAuthContext';
+import { useNavigateTo } from '@/hooks';
+import { PATHS } from '@/router/path';
+import { Box, Button, Flex, Group, Text } from '@mantine/core';
+import { useMutation } from '@tanstack/react-query';
 
 const Header = () => {
-  const navigate = useNavigate();
   const stateContext = useAuthContext();
   const user = stateContext.state.authUser;
+  const navigateTo = useNavigateTo();
 
-  const { mutate, isPending } = useMutation({
+  const { mutate: $logoutUser, isPending } = useMutation({
     mutationFn: () => authApi.logoutUser(),
     onSuccess: () => {
-      window.location.href = "/login";
+      window.location.href = '/login';
     },
-    // onError: (error) => {
-    //   Uncomment and adjust error handling as needed
-    //   if (Array.isArray(error.response?.data?.error)) {
-    //     error.response.data.error.forEach((el) =>
-    //       console.log("error", el.message)
-    //     );
-    //   } else {
-    //     console.log("error", error.response?.data?.error);
-    //   }
-    // },
   });
 
   return (
-    <Flex align="center" justify="space-between" h="100%">
+    <Flex align="center" justify="space-between" h="100%" p={'md'}>
       <Text
         variant="gradient"
-        w={700}
-        onClick={() => navigate("/")}
-        style={{ cursor: "pointer" }}
+        fw={700}
+        onClick={() => navigateTo('/')}
+        style={{ cursor: 'pointer' }}
+        gradient={{ from: 'blue', to: 'teal', deg: 90 }}
       >
-        CodevoWeb
+        Application Logo
       </Text>
       <Box>
         {!user && (
-          <>
-            <Button
-              variant="subtle"
-              mr={2}
-              onClick={() => navigate("/register")}
-            >
+          <Group gap={'sm'}>
+            <Button onClick={() => navigateTo(PATHS.LOGIN)}>Login</Button>
+            <Button variant="outline" mr={2} onClick={() => navigateTo(PATHS.REGISTER)}>
               SignUp
             </Button>
-            <Button variant="subtle" onClick={() => navigate("/login")}>
-              Login
-            </Button>
-          </>
+          </Group>
         )}
         {user && (
           <>
-            <Button
-              variant="subtle"
-              loading={isPending}
-              onClick={() => navigate("/profile")}
-            >
+            <Button variant="subtle" loading={isPending} onClick={() => navigateTo(PATHS.PRROFILE)}>
               Profile
             </Button>
-            <Button
-              variant="subtle"
-              loading={isPending}
-              onClick={() => mutate()}
-            >
+            <Button variant="outline" loading={isPending} onClick={() => $logoutUser()}>
               Logout
             </Button>
           </>

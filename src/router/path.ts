@@ -1,12 +1,11 @@
 export const PATHS = {
-  HOME: {
-    INDEX: "/home/",
-    FALLBACK: "/home",
+  HOME: 'home',
+  LOGIN: 'login',
+  REGISTER: 'register',
+  VERIFY_EMAIL: {
+    INDEX: 'verifyemail',
+    VERIFY: ':verificationCode',
   },
-  LOGIN: "/login",
-  SIGNUP: "/signup",
-
-  // this route below needs to be PUBLIC !
-  FALLBACK: "/home",
-  //
+  PRROFILE: 'profile',
+  UNAUTHORIZED: 'unauthorized',
 };
