@@ -1,9 +1,9 @@
+import { userApi } from '@/api';
 import FullScreenLoader from '@/core/components/FullScreenLoader';
 import { useQuery } from '@tanstack/react-query';
 import React, { useLayoutEffect } from 'react';
 import { useCookies } from 'react-cookie';
 import { useAuthContext } from '../contexts/authProvider/useAuthContext';
-import { userApi } from '@/api';
 
 type AuthMiddlewareProps = {
   children: React.ReactElement;
