@@ -21,6 +21,7 @@ const AuthMiddleware: React.FC<AuthMiddlewareProps> = ({ children }) => {
     retry: 1,
     queryKey: ['authUser'],
     queryFn: () => userApi.getMe(),
+    enabled: !!cookies,
     select: (data) => data.data.user,
   });
 

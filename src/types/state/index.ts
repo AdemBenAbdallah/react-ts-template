@@ -7,8 +7,6 @@ type TUser = {
   role: string;
   updatedAt: string;
   createdAt: string;
-  _id: string;
-  __v: number;
 };
 
 type RegisterInput = {
