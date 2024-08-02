@@ -4,12 +4,10 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import React from 'react';
 import ReactDOM from 'react-dom/client';
-import { ErrorBoundary } from 'react-error-boundary';
 import { BrowserRouter as Router } from 'react-router-dom';
 import App from './App.tsx';
 import { AuthProvider } from './common/contexts/index.ts';
 import AuthMiddleware from './common/middleware/AuthMiddleware.tsx';
-import { RootErrorFallback } from './core/components/ErrorComponent.tsx';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -26,9 +24,7 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
         <MantineProvider>
           <AuthProvider>
             <AuthMiddleware>
-              <ErrorBoundary FallbackComponent={RootErrorFallback}>
-                <App />
-              </ErrorBoundary>
+              <App />
             </AuthMiddleware>
           </AuthProvider>
         </MantineProvider>

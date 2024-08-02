@@ -1,5 +1,5 @@
-import React from "react";
-import type { TUser } from "../../../types/state/index";
+import { TUser } from '@/types';
+import React from 'react';
 
 type State = {
   authUser: TUser | null;
@@ -18,13 +18,13 @@ const initialState: State = {
 
 type AuthProviderProps = { children: React.ReactNode };
 
-export const StateContext = React.createContext<
-  { state: State; dispatch: Dispatch } | undefined
->(undefined);
+export const StateContext = React.createContext<{ state: State; dispatch: Dispatch } | undefined>(
+  undefined
+);
 
 const stateReducer = (state: State, action: Action) => {
   switch (action.type) {
-    case "SET_USER": {
+    case 'SET_USER': {
       return {
         ...state,
         authUser: action.payload,
@@ -39,9 +39,7 @@ const stateReducer = (state: State, action: Action) => {
 const AuthProvider = ({ children }: AuthProviderProps) => {
   const [state, dispatch] = React.useReducer(stateReducer, initialState);
   const value = { state, dispatch };
-  return (
-    <StateContext.Provider value={value}>{children}</StateContext.Provider>
-  );
+  return <StateContext.Provider value={value}>{children}</StateContext.Provider>;
 };
 
 export { AuthProvider };

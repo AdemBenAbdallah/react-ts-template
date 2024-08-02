@@ -1,8 +1,10 @@
 import { userApi } from '@/api';
+import { RootErrorFallback } from '@/core/components/ErrorComponent';
 import FullScreenLoader from '@/core/components/FullScreenLoader';
-import { useQuery } from '@tanstack/react-query';
+import { QueryErrorResetBoundary, useQuery } from '@tanstack/react-query';
 import React, { useLayoutEffect } from 'react';
 import { useCookies } from 'react-cookie';
+import { ErrorBoundary } from 'react-error-boundary';
 import { useAuthContext } from '../contexts/authProvider/useAuthContext';
 
 type AuthMiddlewareProps = {
@@ -39,7 +41,13 @@ const AuthMiddleware: React.FC<AuthMiddlewareProps> = ({ children }) => {
     return <FullScreenLoader />;
   }
 
-  return children;
+  return (
+    <QueryErrorResetBoundary>
+      <ErrorBoundary resetKeys={[user]} fallbackRender={RootErrorFallback}>
+        {children}
+      </ErrorBoundary>
+    </QueryErrorResetBoundary>
+  );
 };
 
 export default AuthMiddleware;
