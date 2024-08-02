@@ -12,7 +12,7 @@ import AuthMiddleware from './common/middleware/AuthMiddleware.tsx';
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
-      staleTime: 5 * 1000,
+      staleTime: 1000 * 60,
     },
   },
 });
