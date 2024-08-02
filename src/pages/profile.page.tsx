@@ -1,5 +1,9 @@
+import { useAuthContext } from '@/common/contexts/authProvider/useAuthContext';
+
 const ProfilePage = () => {
-  return <div>ProfilePage</div>;
+  const { state } = useAuthContext();
+  console.log(state.authUser);
+  return <div>{JSON.stringify(state.authUser)}</div>;
 };
 
 export default ProfilePage;
