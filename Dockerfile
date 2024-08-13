@@ -1,23 +1,29 @@
 FROM node:20-alpine
 
-RUN addgrounp app && adduser -S -G app app
+# Create app group and user
+RUN addgroup -S app && adduser -S -G app app
 
-USER app
-
+# Set working directory
 WORKDIR /app
 
-COPY package*.json ./
+# Copy package files with the correct ownership
+COPY --chown=app:app package.json yarn.lock ./
 
+# Install dependencies as root
 USER root
+RUN yarn install
 
-RUN chown -R app:app .
+# Change ownership of the entire app directory to the app user
+RUN chown -R app:app /app
 
+# Switch to app user
 USER app
 
-RUN yarn 
+# Copy the rest of the application files with the correct ownership
+COPY --chown=app:app . .
 
-COPY . .
-
+# Expose the port
 EXPOSE 5173
 
-CMD yarn dev
+# Start the application
+CMD ["yarn", "dev"]
